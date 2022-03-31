@@ -1,4 +1,5 @@
 import random
+import sys
 
 
 
@@ -71,13 +72,69 @@ def add_new_twos_and_fours(matrix):
             
 
 
+def user_character_input():
+    return input()
+
+
+
+def move_up(matrix):
+    for i in range(1, len(matrix)):
+        for j in range(len(matrix[i])):
+            if matrix[i-1][j] == " " and matrix[i][j] != " ":
+                matrix[i-1][j] = matrix[i][j]
+                matrix[i][j] = " "
+
+
+
+def move_down(matrix):
+    for i in reversed(range(len(matrix)-1)):
+        for j in range(len(matrix[i])):
+            if matrix[i+1][j] == " " and matrix[i][j] != " ":
+                matrix[i+1][j] = matrix[i][j]
+                matrix[i][j] = " "
+
+
+
+def move_left(matrix):
+    for i in range(len(matrix)):
+        for j in range(1, len(matrix[i])):
+            if matrix[i][j-1] == " " and matrix[i][j] != " ":
+                matrix[i][j-1] = matrix[i][j]
+                matrix[i][j] = " "
+
+
+
+def move_right(matrix):
+    for i in range(len(matrix)):
+        for j in reversed(range(len(matrix[i])-1)):
+            if matrix[i][j+1] == " " and matrix[i][j] != " ":
+                matrix[i][j+1] = matrix[i][j]
+                matrix[i][j] = " "
+
+
+
+def move(usr_input, matrix):
+    if usr_input == "w":
+        move_up(matrix)
+    if usr_input == "a":
+        move_left(matrix)
+    if usr_input == "s":
+        move_down(matrix)
+    if usr_input == "d":
+        move_right(matrix)
+
+
 
 def main():
     matrix = init(get_board_size())
-    print_matrix(matrix)
     matrix = add_new_twos_and_fours(matrix)
-    print("\n")
-    print_matrix(matrix)
+    while(True):
+        print("\n")
+        print_matrix(matrix)
+        move(user_character_input(), matrix)
+        print("\n")
+        print_matrix(matrix)
+
 
 
 if __name__ == "__main__":
