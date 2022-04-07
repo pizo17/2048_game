@@ -66,9 +66,8 @@ def add_new_twos_and_fours(matrix):
         for i in range(num_of_valid_spaces - 1):
             coords = choose_random_coordinates(len(matrix)-1)
             while not is_position_free(matrix, coords):
-                coords = choose_random_coordinates(len(matrix))
+                coords = choose_random_coordinates(len(matrix)-1)
             matrix[coords[0]][coords[1]] = choose_next_number()
-    return matrix
             
 
 
@@ -113,7 +112,7 @@ def move_right(matrix):
 
 
 
-def move(usr_input, matrix):
+def one_cell_move(usr_input, matrix):
     if usr_input == "w":
         move_up(matrix)
     if usr_input == "a":
@@ -125,13 +124,82 @@ def move(usr_input, matrix):
 
 
 
+def add_up(matrix):
+    j_start = 0
+    for i in range(1, len(matrix)):
+        for j in range(j_start, len(matrix[i])):
+            if matrix[i][j] == " " or matrix[i-1][j] == " " or matrix[i+1][j] == " ":
+                j_start += 1
+            elif matrix[i][j] == matrix[i-1][j]:
+                matrix[i-1][j] += matrix[i-1][j]
+                matrix[i][j] = " "
+                j_start += 1
+
+
+
+def add_down(matrix):
+    j_start = 0
+    for i in reversed(range(len(matrix))):
+        for j in range(j_start, len(matrix[i])):
+            if matrix[i][j] == " " or matrix[i-1][j] == " " or matrix[i+1][j] == " ":
+                j_start += 1
+            elif matrix[i][j] == matrix[i+1][j]:
+                matrix[i+1][j] = matrix[i][j]
+                matrix[i][j] = " "
+                j_start += 1
+            
+
+
+def add_left(matrix):
+    i_start = 0
+    for j in range(1, len(matrix[1])):
+        for i in range(i_start, len(matrix)):   
+            if matrix[i][j] == " " or matrix[i][j-1] == " " or matrix[i][j+1] == " ":
+                i_start += 1
+            elif matrix[i][j-1] == " " and matrix[i][j] != " ":
+                matrix[i][j-1] = matrix[i][j]
+                matrix[i][j] = " "
+                i_start += 1
+
+
+
+def add_right(matrix):
+    i_start = 0
+    for j in reversed(range(len(matrix[1])-1)):
+        for i in range(i_start, len(matrix)):
+            if matrix[i][j] == " " or matrix[i][j-1] == " " or matrix[i][j+1] == " ":
+                i_start += 1
+            elif matrix[i][j+1] == " " and matrix[i][j] != " ":
+                matrix[i][j+1] = matrix[i][j]
+                matrix[i][j] = " "
+                i_start += 1
+
+
+
+def add(matrix, usr_input):
+    if usr_input == "w":
+        add_up(matrix)
+    if usr_input == "a":
+        add_left(matrix)
+    if usr_input == "s":
+        add_down(matrix)
+    if usr_input == "d":
+        add_right(matrix)
+
+
+
 def main():
     matrix = init(get_board_size())
-    matrix = add_new_twos_and_fours(matrix)
+    user_dir = ""
+    add_new_twos_and_fours(matrix)
+    print("\n")
+    print_matrix(matrix)
     while(True):
-        print("\n")
-        print_matrix(matrix)
-        move(user_character_input(), matrix)
+        user_dir = user_character_input()
+        
+        one_cell_move(user_dir, matrix)
+        add(matrix, user_dir)
+        add_new_twos_and_fours(matrix)
         print("\n")
         print_matrix(matrix)
 

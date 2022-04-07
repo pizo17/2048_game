@@ -1,3 +1,4 @@
-import msvcrt
-input_char = msvcrt.getch()
-print(input_char)
+import sys
+inchar = sys.stdin.read()
+if inchar == "w":
+    print(inchar)
