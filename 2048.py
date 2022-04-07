@@ -3,19 +3,17 @@ import sys
 
 
 
-def init(board_size):
-    matrix=[]
+def init(matrix, board_size):
     for i in range(board_size):
         row = []
         for j in range(board_size):
             row.append(" ")
         matrix.append(row)
-    return matrix
 
 
 
 def get_board_size():
-    return int(input("mekkora legyen a tábla?"))
+    return int(input("mekkora legyen a tábla? "))
     
 
 
@@ -63,7 +61,7 @@ def is_board_full(matrix, return_num_of_empty_spaces=False):
 def add_new_twos_and_fours(matrix):
     is_full, num_of_valid_spaces = is_board_full(matrix, True)
     if not is_full:
-        for i in range(num_of_valid_spaces - 1):
+        for i in range(1, num_of_valid_spaces):
             coords = choose_random_coordinates(len(matrix)-1)
             while not is_position_free(matrix, coords):
                 coords = choose_random_coordinates(len(matrix)-1)
@@ -126,25 +124,25 @@ def one_cell_move(usr_input, matrix):
 
 def add_up(matrix):
     j_start = 0
-    for i in range(1, len(matrix)):
+    for i in range(len(matrix)-1):
         for j in range(j_start, len(matrix[i])):
-            if matrix[i][j] == " " or matrix[i-1][j] == " " or matrix[i+1][j] == " ":
+            if matrix[i][j] == " ":
                 j_start += 1
-            elif matrix[i][j] == matrix[i-1][j]:
-                matrix[i-1][j] += matrix[i-1][j]
-                matrix[i][j] = " "
+            elif matrix[i][j] == matrix[i+1][j]:
+                matrix[i][j] += matrix[i+1][j]
+                matrix[i+1][j] = " "
                 j_start += 1
 
 
 
 def add_down(matrix):
     j_start = 0
-    for i in reversed(range(len(matrix))):
+    for i in reversed(range(len(matrix)-1)):
         for j in range(j_start, len(matrix[i])):
-            if matrix[i][j] == " " or matrix[i-1][j] == " " or matrix[i+1][j] == " ":
+            if matrix[i][j] == " ":
                 j_start += 1
             elif matrix[i][j] == matrix[i+1][j]:
-                matrix[i+1][j] = matrix[i][j]
+                matrix[i+1][j] += matrix[i][j]
                 matrix[i][j] = " "
                 j_start += 1
             
@@ -154,10 +152,10 @@ def add_left(matrix):
     i_start = 0
     for j in range(1, len(matrix[1])):
         for i in range(i_start, len(matrix)):   
-            if matrix[i][j] == " " or matrix[i][j-1] == " " or matrix[i][j+1] == " ":
+            if matrix[i][j] == " ":
                 i_start += 1
-            elif matrix[i][j-1] == " " and matrix[i][j] != " ":
-                matrix[i][j-1] = matrix[i][j]
+            elif matrix[i][j] == matrix[i][j-1]:
+                matrix[i][j-1] += matrix[i][j]
                 matrix[i][j] = " "
                 i_start += 1
 
@@ -167,10 +165,10 @@ def add_right(matrix):
     i_start = 0
     for j in reversed(range(len(matrix[1])-1)):
         for i in range(i_start, len(matrix)):
-            if matrix[i][j] == " " or matrix[i][j-1] == " " or matrix[i][j+1] == " ":
+            if matrix[i][j] == " ":
                 i_start += 1
-            elif matrix[i][j+1] == " " and matrix[i][j] != " ":
-                matrix[i][j+1] = matrix[i][j]
+            elif matrix[i][j] == matrix[i][j+1]:
+                matrix[i][j+1] += matrix[i][j]
                 matrix[i][j] = " "
                 i_start += 1
 
@@ -189,16 +187,16 @@ def add(matrix, usr_input):
 
 
 def main():
-    matrix = init(get_board_size())
+    matrix = []
+    init(matrix, get_board_size())
     user_dir = ""
     add_new_twos_and_fours(matrix)
     print("\n")
     print_matrix(matrix)
     while(True):
         user_dir = user_character_input()
-        
-        one_cell_move(user_dir, matrix)
         add(matrix, user_dir)
+        one_cell_move(user_dir, matrix)
         add_new_twos_and_fours(matrix)
         print("\n")
         print_matrix(matrix)
