@@ -125,54 +125,58 @@ def one_cell_move(usr_input, matrix):
 
 
 def add_up(matrix):
-    j_start = 0
+    excluded_indices = set()
     for i in range(len(matrix)-1):
-        for j in range(j_start, len(matrix[i])):
-            if matrix[i][j] == " ":
-                j_start += 1
-            elif matrix[i][j] == matrix[i+1][j]:
-                matrix[i][j] += matrix[i+1][j]
-                matrix[i+1][j] = " "
-                j_start += 1
+        for j in range(len(matrix[i])):
+            if j not in excluded_indices:
+                if matrix[i][j] == " ":
+                    excluded_indices.add(j)
+                elif matrix[i][j] == matrix[i+1][j]:
+                    matrix[i][j] += matrix[i+1][j]
+                    matrix[i+1][j] = " "
+                    excluded_indices.add(j)
 
 
 
 def add_down(matrix):
-    j_start = 0
+    excluded_indices = set()
     for i in reversed(range(len(matrix)-1)):
-        for j in range(j_start, len(matrix[i])):
-            if matrix[i][j] == " ":
-                j_start += 1
-            elif matrix[i][j] == matrix[i+1][j]:
-                matrix[i+1][j] += matrix[i][j]
-                matrix[i][j] = " "
-                j_start += 1
+        for j in range(len(matrix[i])):
+            if j not in excluded_indices:
+                if matrix[i][j] == " ":
+                    excluded_indices.add(j)
+                elif matrix[i][j] == matrix[i+1][j]:
+                    matrix[i+1][j] += matrix[i][j]
+                    matrix[i][j] = " "
+                    excluded_indices.add(j)
             
 
 
 def add_left(matrix):
-    i_start = 0
-    for j in range(1, len(matrix[0])):
-        for i in range(i_start, len(matrix)):   
-            if matrix[i][j] == " ":
-                i_start += 1
-            elif matrix[i][j] == matrix[i][j-1]:
-                matrix[i][j-1] += matrix[i][j]
-                matrix[i][j] = " "
-                i_start += 1
+    excluded_indices = set()
+    for j in range(1, len(matrix[0])-1):
+        for i in range(len(matrix)):   
+            if i not in excluded_indices:
+                if matrix[i][j] == " ":
+                    excluded_indices.add(i)
+                elif matrix[i][j] == matrix[i][j-1]:
+                    matrix[i][j-1] += matrix[i][j]
+                    matrix[i][j] = " "
+                    excluded_indices.add(i)
 
 
 
 def add_right(matrix):
-    i_start = 0
+    excluded_indices = set()
     for j in reversed(range(len(matrix[0])-1)):
-        for i in range(i_start, len(matrix)):
-            if matrix[i][j] == " ":
-                i_start += 1
-            elif matrix[i][j] == matrix[i][j+1]:
-                matrix[i][j+1] += matrix[i][j]
-                matrix[i][j] = " "
-                i_start += 1
+        for i in range(len(matrix)):
+            if i not in excluded_indices:
+                if matrix[i][j] == " ":
+                    excluded_indices.add(i)
+                elif matrix[i][j] == matrix[i][j+1]:
+                    matrix[i][j+1] += matrix[i][j]
+                    matrix[i][j] = " "
+                    excluded_indices.add(i)
 
 
 
