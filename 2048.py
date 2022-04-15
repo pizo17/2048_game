@@ -1,5 +1,7 @@
 import random
 import sys
+import os
+import time
 
 
 
@@ -20,7 +22,7 @@ def get_board_size():
 def print_matrix(matrix):
     for row in matrix:
         for elem in row:
-            print(f"[{elem}]", end="")
+            print(f"[{elem : ^4}]", end="")
         print()
 
 
@@ -150,7 +152,7 @@ def add_down(matrix):
 
 def add_left(matrix):
     i_start = 0
-    for j in range(1, len(matrix[1])):
+    for j in range(1, len(matrix[0])):
         for i in range(i_start, len(matrix)):   
             if matrix[i][j] == " ":
                 i_start += 1
@@ -163,7 +165,7 @@ def add_left(matrix):
 
 def add_right(matrix):
     i_start = 0
-    for j in reversed(range(len(matrix[1])-1)):
+    for j in reversed(range(len(matrix[0])-1)):
         for i in range(i_start, len(matrix)):
             if matrix[i][j] == " ":
                 i_start += 1
@@ -195,8 +197,20 @@ def main():
     print_matrix(matrix)
     while(True):
         user_dir = user_character_input()
+        for i in range(len(matrix)):
+            add(matrix, user_dir)
+            time.sleep(0.5)
+            print("\n")
+            print_matrix(matrix)
+            one_cell_move(user_dir, matrix)
+            time.sleep(0.5)
+            print("\n")
+            print_matrix(matrix)
         add(matrix, user_dir)
-        one_cell_move(user_dir, matrix)
+        time.sleep(0.5)
+        print("\n")
+        print_matrix(matrix)
+        
         add_new_twos_and_fours(matrix)
         print("\n")
         print_matrix(matrix)
