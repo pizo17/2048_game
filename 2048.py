@@ -1,9 +1,8 @@
-from multiprocessing.sharedctypes import Value
 import random
 import sys
 import os
 import time
-from xml.etree.ElementTree import QName
+from tkinter import W
 
 
 
@@ -77,40 +76,38 @@ def user_character_input():
     return input()
 
 
+def move_logic(matrix, i, j, i_offset=0, j_offset=0):
+    if matrix[i+i_offset][j+j_offset] == " " and matrix[i][j] != " ":
+        matrix[i+i_offset][j+j_offset] = matrix[i][j]
+        matrix[i][j] = " "
+
+
 
 def move_up(matrix):
     for i in range(1, len(matrix)):
         for j in range(len(matrix[i])):
-            if matrix[i-1][j] == " " and matrix[i][j] != " ":
-                matrix[i-1][j] = matrix[i][j]
-                matrix[i][j] = " "
+            move_logic(matrix, i, j, -1)
 
 
 
 def move_down(matrix):
     for i in reversed(range(len(matrix)-1)):
         for j in range(len(matrix[i])):
-            if matrix[i+1][j] == " " and matrix[i][j] != " ":
-                matrix[i+1][j] = matrix[i][j]
-                matrix[i][j] = " "
+            move_logic(matrix, i, j, 1)
 
 
 
 def move_left(matrix):
     for i in range(len(matrix)):
         for j in range(1, len(matrix[i])):
-            if matrix[i][j-1] == " " and matrix[i][j] != " ":
-                matrix[i][j-1] = matrix[i][j]
-                matrix[i][j] = " "
-
+            move_logic(matrix, i, j, 0, -1)
+            
 
 
 def move_right(matrix):
     for i in range(len(matrix)):
         for j in reversed(range(len(matrix[i])-1)):
-            if matrix[i][j+1] == " " and matrix[i][j] != " ":
-                matrix[i][j+1] = matrix[i][j]
-                matrix[i][j] = " "
+            move_logic(matrix, i, j, 0, 1)
 
 
 
@@ -126,59 +123,46 @@ def one_cell_move(usr_input, matrix):
 
 
 
+def add_logic(matrix, excluded_indices, i, j, i_offset=0, j_offset=0):
+    examined_index = j if i_offset != 0 else i
+    if examined_index not in excluded_indices:
+        if matrix[i][j] == " ":
+            return j if i_offset != 0 else i
+        elif matrix[i][j] == matrix[i+i_offset][j+j_offset]:
+            matrix[i+i_offset][j+j_offset] += matrix[i][j]
+            matrix[i][j] = " "
+            return j if i_offset != 0 else i
+
+
 def add_up(matrix):
     excluded_indices = set()
-    for i in range(len(matrix)-1):
+    for i in range(len(matrix)):
         for j in range(len(matrix[i])):
-            if j not in excluded_indices:
-                if matrix[i][j] == " ":
-                    excluded_indices.add(j)
-                elif matrix[i][j] == matrix[i+1][j]:
-                    matrix[i][j] += matrix[i+1][j]
-                    matrix[i+1][j] = " "
-                    excluded_indices.add(j)
-
+            excluded_indices.add(add_logic(matrix, excluded_indices, i, j, -1))
+            
 
 
 def add_down(matrix):
     excluded_indices = set()
     for i in reversed(range(len(matrix)-1)):
         for j in range(len(matrix[i])):
-            if j not in excluded_indices:
-                if matrix[i][j] == " ":
-                    excluded_indices.add(j)
-                elif matrix[i][j] == matrix[i+1][j]:
-                    matrix[i+1][j] += matrix[i][j]
-                    matrix[i][j] = " "
-                    excluded_indices.add(j)
+            excluded_indices.add(add_logic(matrix, excluded_indices, i, j, 1))
             
 
 
 def add_left(matrix):
     excluded_indices = set()
-    for j in range(1, len(matrix[0])-1):
-        for i in range(len(matrix)):   
-            if i not in excluded_indices:
-                if matrix[i][j] == " ":
-                    excluded_indices.add(i)
-                elif matrix[i][j] == matrix[i][j-1]:
-                    matrix[i][j-1] += matrix[i][j]
-                    matrix[i][j] = " "
-                    excluded_indices.add(i)
+    for i in range(len(matrix)):   
+        for j in range(1, len(matrix[i])):
+            excluded_indices.add(add_logic(matrix, excluded_indices, i, j, 0, -1))
 
 
 
 def add_right(matrix):
     excluded_indices = set()
-    for j in reversed(range(len(matrix[0])-1)):
-        for i in range(len(matrix)):
-            if i not in excluded_indices:
-                if matrix[i][j] == " ":
-                    excluded_indices.add(i)
-                elif matrix[i][j] == matrix[i][j+1]:
-                    matrix[i][j+1] += matrix[i][j]
-                    matrix[i][j] = " "
-                    excluded_indices.add(i)
+    for i in range(len(matrix)):
+        for j in reversed(range(len(matrix[i])-1)):
+            excluded_indices.add(add_logic(matrix, excluded_indices, i, j, 0, 1))
 
 
 
